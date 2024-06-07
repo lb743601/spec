@@ -7,6 +7,7 @@ from serial_class import SerialClass
 from plot_widget import PlotWidget
 from scipy.signal import savgol_filter
 import numpy as np
+import datetime
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         self.mode=1
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_9.clicked.connect(self.dis_back)
         self.pushButton_10.clicked.connect(self.dis_spec)
         self.pushButton_5.clicked.connect(self.caculate)
+        self.pushButton_3.clicked.connect(self.save_data)
         # 创建并添加 PlotWidget 到界面中
         self.plot_widget = PlotWidget(self.centralwidget)
         self.plot_widget.setGeometry(self.graphicsView.geometry())
@@ -173,6 +175,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.pushButton_10.setText("光谱曲线")
         else:
             self.textBrowser.append("未采集光谱曲线")
+    def save_data(self):
+        if self.back_data is not None and self.dark_data is not None and self.spec_data is not None:
+            time_str="./data/"+datetime.datetime.now().strftime('%Y-%m-%d-%H_%M_%S')
+            back_data_str=time_str+"_back"
+            back_data_smooth_str=time_str+"_back_smooth"
+            dark_data_str = time_str + "_dark"
+            dark_data_smooth_str = time_str + "_dark_smooth"
+            spec_data_str=time_str+"_spec"
+            spec_data_smooth_str=time_str+"_spec_smooth"
+            np.save(back_data_str,self.back_data)
+            np.save(back_data_smooth_str,self.back_data_smooth)
+            np.save(dark_data_str, self.dark_data)
+            np.save(dark_data_smooth_str, self.dark_data_smooth)
+            np.save(spec_data_str, self.spec_data)
+            np.save(spec_data_smooth_str, self.spec_data_smooth)
+            self.textBrowser.append("保存成功")
+        else:
+            self.textBrowser.append("数据未采集完全")
     def caculate(self):
         if self.spec_data is not None and self.dark_data is not None and self.back_data is not None:
             back = (self.back_data_smooth[0] + self.back_data_smooth[1] + self.back_data_smooth[2]) / 3
