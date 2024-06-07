@@ -292,6 +292,25 @@ p, li { white-space: pre-wrap; }
      <string>光谱曲线</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>670</y>
+      <width>70</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>计算</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

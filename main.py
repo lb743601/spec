@@ -25,6 +25,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_8.clicked.connect(self.dis_dark)
         self.pushButton_9.clicked.connect(self.dis_back)
         self.pushButton_10.clicked.connect(self.dis_spec)
+        self.pushButton_5.clicked.connect(self.caculate)
         # 创建并添加 PlotWidget 到界面中
         self.plot_widget = PlotWidget(self.centralwidget)
         self.plot_widget.setGeometry(self.graphicsView.geometry())
@@ -172,6 +173,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.pushButton_10.setText("光谱曲线")
         else:
             self.textBrowser.append("未采集光谱曲线")
+    def caculate(self):
+        if self.spec_data is not None and self.dark_data is not None and self.back_data is not None:
+            back = (self.back_data_smooth[0] + self.back_data_smooth[1] + self.back_data_smooth[2]) / 3
+            dark=  (self.dark_data_smooth[0] + self.dark_data_smooth[1] + self.dark_data_smooth[2]) / 3
+            out=(self.spec_data_smooth-dark)/(back-dark)
+            out = savgol_filter(out, window_length=51, polyorder=3)
+            self.plot_widget.update_plot(out)
+
+        else:
+            self.textBrowser.append("数据未采集完全")
     def smooth_data(self):
         pass
         # if self.ser.spec_data is not None:
