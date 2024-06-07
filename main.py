@@ -17,7 +17,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.scan_serial)
         self.pushButton_4.clicked.connect(self.open_port)
         self.pushButton_2.clicked.connect(self.spec_scan)
-        self.pushButton_5.clicked.connect(self.smooth_data)
+        # self.pushButton_5.clicked.connect(self.smooth_data)
         self.ser.data_received.connect(self.update_text_browser)
         self.ser.scan_complete.connect(self.scan_complete)
         self.pushButton_6.clicked.connect(self.dark_scan)

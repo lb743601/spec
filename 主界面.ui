@@ -105,8 +105,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>0</y>
+      <x>0</x>
+      <y>670</y>
       <width>70</width>
       <height>30</height>
      </rect>
@@ -173,7 +173,7 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>530</x>
       <y>0</y>
-      <width>120</width>
+      <width>241</width>
       <height>30</height>
      </rect>
     </property>
@@ -195,25 +195,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text">
      <string>打开</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_5">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>670</y>
-      <width>70</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>微软雅黑</family>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>平滑化</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_6">
