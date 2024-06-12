@@ -20,8 +20,24 @@ class PlotWidget(QGraphicsView):
         self.plot_widget.setLabel('left', 'Intensity')
         self.plot_widget.setLabel('bottom', 'Wavelength', units='nm')
 
-    def update_plot(self, data):
-        x = range(1550, 1550 + len(data))  # 生成从 1550 开始的横坐标
+    # def update_plot(self, data):
+    #     x = range(1550, 1550 + len(data))  # 生成从 1550 开始的横坐标
+    #     self.plot_data_item.setData(x, data)
+    #     self.plot_widget.setXRange(1550, 1850)  # 设置横坐标范围
+    #     self.plot_widget.getAxis('bottom').setTicks([[(i, str(i)) for i in range(1550, 1851, 50)]])  # 设置横坐标刻度
+
+    # def update_plot(self, data, interval):
+    #     x = [1550 + i * interval for i in range(len(data))]  # 根据间隔生成横坐标
+    #     self.plot_data_item.setData(x, data)
+    #     self.plot_widget.setXRange(1550, 1550 + interval * (len(data) - 1))  # 设置横坐标范围
+    #     ticks = [(1550 + i * interval, str(1550 + i * interval)) for i in
+    #              range((1850 - 1550) // interval + 1)]  # 设置横坐标刻度
+    #     self.plot_widget.getAxis('bottom').setTicks([ticks])
+
+    def update_plot(self, data, interval):
+        x = [1550 + i * interval for i in range(len(data))]  # 根据间隔生成横坐标
         self.plot_data_item.setData(x, data)
-        self.plot_widget.setXRange(1550, 1850)  # 设置横坐标范围
-        self.plot_widget.getAxis('bottom').setTicks([[(i, str(i)) for i in range(1550, 1851, 50)]])  # 设置横坐标刻度
+        self.plot_widget.setXRange(1550, 1550 + interval * (len(data) - 1))  # 设置横坐标范围
+        # 设置横坐标刻度，只显示每隔50个单位的刻度
+        ticks = [(i, str(i)) for i in range(1550, 1550 + interval * (len(data) - 1) + 1) if (i - 1550) % 50 == 0]
+        self.plot_widget.getAxis('bottom').setTicks([ticks])

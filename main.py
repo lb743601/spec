@@ -70,6 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.pushButton_2.setText("扫描中")
                     self.mode=1
                     text = int(text)
+
                     self.ser.spec_scan(text)
             else:
                 self.textBrowser.append("非法输入")
@@ -118,8 +119,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.pushButton_7.setText("扫描中")
                     self.mode=3
                     text = int(text)
-                    self.back_data = np.zeros((3,text))
-                    self.back_data_smooth = np.zeros((3, text))
+                    num = (301 // text) + 1
+                    if text==1:
+                        num=301
+                    self.back_data = np.zeros((3,num))
+                    self.back_data_smooth = np.zeros((3, num))
                     self.ser.spec_scan(text)
             else:
                 self.textBrowser.append("非法输入")
@@ -134,8 +138,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.pushButton_6.setText("扫描中")
                     self.mode=3
                     text = int(text)
-                    self.dark_data = np.zeros((3,text))
-                    self.dark_data_smooth = np.zeros((3, text))
+                    num = (301 // text) + 1
+                    if text==1:
+                        num=301
+                    self.dark_data = np.zeros((3,num))
+                    self.dark_data_smooth = np.zeros((3, num))
                     self.ser.spec_scan(text)
             else:
                 self.textBrowser.append("非法输入")
@@ -145,11 +152,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.dark_data is not None:
             if self.pushButton_8.text()=="暗电流曲线":
                 output=(self.dark_data[0]+self.dark_data[1]+self.dark_data[2])/3
-                self.plot_widget.update_plot(output)
+                self.plot_widget.update_plot(output,int(self.textEdit.toPlainText()))
                 self.pushButton_8.setText("平滑化暗电流")
             else:
                 output = (self.dark_data_smooth[0] + self.dark_data_smooth[1] + self.dark_data_smooth[2]) / 3
-                self.plot_widget.update_plot(output)
+                self.plot_widget.update_plot(output,int(self.textEdit.toPlainText()))
                 self.pushButton_8.setText("暗电流曲线")
         else:
             self.textBrowser.append("未采集暗电流曲线")
@@ -157,27 +164,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.back_data is not None:
             if self.pushButton_9.text()=="背景曲线":
                 output=(self.back_data[0]+self.back_data[1]+self.back_data[2])/3
-                self.plot_widget.update_plot(output)
+                self.plot_widget.update_plot(output,int(self.textEdit.toPlainText()))
                 self.pushButton_9.setText("平滑化背景")
             else:
                 output = (self.back_data_smooth[0] + self.back_data_smooth[1] + self.back_data_smooth[2]) / 3
-                self.plot_widget.update_plot(output)
+                self.plot_widget.update_plot(output,int(self.textEdit.toPlainText()))
                 self.pushButton_9.setText("背景曲线")
         else:
             self.textBrowser.append("未采集背景曲线")
     def dis_spec(self):
         if self.spec_data is not None:
             if self.pushButton_10.text()=="光谱曲线":
-                self.plot_widget.update_plot(self.spec_data)
+                self.plot_widget.update_plot(self.spec_data,int(self.textEdit.toPlainText()))
                 self.pushButton_10.setText("平滑化光谱")
             else:
-                self.plot_widget.update_plot(self.spec_data_smooth)
+                self.plot_widget.update_plot(self.spec_data_smooth,int(self.textEdit.toPlainText()))
                 self.pushButton_10.setText("光谱曲线")
         else:
             self.textBrowser.append("未采集光谱曲线")
     def save_data(self):
         if self.back_data is not None and self.dark_data is not None and self.spec_data is not None:
-            time_str="./data/"+datetime.datetime.now().strftime('%Y-%m-%d-%H_%M_%S')
+            time_str="./data/"+"interval_"+self.textEdit.toPlainText()+"_"+datetime.datetime.now().strftime('%Y-%m-%d-%H_%M_%S')
             back_data_str=time_str+"_back"
             back_data_smooth_str=time_str+"_back_smooth"
             dark_data_str = time_str + "_dark"
@@ -194,12 +201,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.textBrowser.append("数据未采集完全")
     def caculate(self):
-        if self.spec_data is not None and self.dark_data is not None and self.back_data is not None:
+        if self.spec_data is not None and self.dark_data is not None and self.back_data is not None and self.spec_data.shape==self.back_data[0].shape and self.spec_data.shape==self.dark_data[0].shape:
+
             back = (self.back_data_smooth[0] + self.back_data_smooth[1] + self.back_data_smooth[2]) / 3
             dark=  (self.dark_data_smooth[0] + self.dark_data_smooth[1] + self.dark_data_smooth[2]) / 3
             out=(self.spec_data_smooth-dark)/(back-dark)
             out = savgol_filter(out, window_length=51, polyorder=3)
-            self.plot_widget.update_plot(out)
+            self.plot_widget.update_plot(out,int(self.textEdit.toPlainText()))
 
         else:
             self.textBrowser.append("数据未采集完全")

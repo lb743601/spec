@@ -181,7 +181,7 @@ class SerialClass(QObject):
     def receive_data(self, target_num):
         while not self.stop_event.is_set() and self.num < target_num:
             if self.ser:
-                data = self.ser.readline().decode('utf-8').rstrip()
+                data = self.ser.readline().decode('gbk').rstrip()
                 if data:
                     print(f"接收到的数据: {data}")
                     if len(data) > 1 and data[1] == '.':
@@ -193,14 +193,20 @@ class SerialClass(QObject):
 
     def spec_scan(self, target_num):
         if self.receive_thread is None or not self.receive_thread.is_alive():
-            self.spec_data = np.zeros(target_num)
+            if(target_num==1):
+                self.spec_data = np.zeros(301)
+                x=301
+            else:
+                self.spec_data=np.zeros((301 // target_num) + 1)
+                x=(301 // target_num) + 1
             self.num = 0
             self.stop_event.clear()
-            self.receive_thread = threading.Thread(target=self.receive_data, args=(target_num,))
+            self.receive_thread = threading.Thread(target=self.receive_data, args=(x,))
             self.receive_thread.start()
             print("开始接收\n")
             time.sleep(1)
-            self.send_data("spe_scan(1)")
+            sdata="spe_scan("+str(target_num)+")"
+            self.send_data(sdata)
         else:
             print("扫描程序正在运行\n")
 
