@@ -1,6 +1,6 @@
 import sys
 import time
-
+import math
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from ui import Ui_MainWindow
 from serial_class import SerialClass
@@ -8,6 +8,9 @@ from plot_widget import PlotWidget
 from scipy.signal import savgol_filter
 import numpy as np
 import datetime
+def sf(data):
+    outdata = savgol_filter(data, window_length=21, polyorder=10)
+    return outdata
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         self.mode=1
@@ -85,17 +88,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.information(self, "信息", "扫描完成")
             if self.pushButton_2.text()=="扫描中":
                 self.spec_data=self.ser.spec_data
-                self.spec_data_smooth=savgol_filter(self.spec_data, window_length=51, polyorder=3)
+                self.spec_data_smooth=sf(self.spec_data)
                 self.pushButton_2.setText("开始")
             if self.pushButton_6.text()=="扫描中":
                 self.dark_data[2]=self.ser.spec_data
                 self.pushButton_6.setText("暗电流")
                 for i in range(3):
-                    self.dark_data_smooth[i]=savgol_filter(self.dark_data[i], window_length=51, polyorder=3)
+                    self.dark_data_smooth[i]=sf(self.dark_data[i])
             if self.pushButton_7.text()=="扫描中":
                 self.back_data[2]=self.ser.spec_data
                 for i in range(3):
-                    self.back_data_smooth[i]=savgol_filter(self.back_data[i], window_length=51, polyorder=3)
+                    self.back_data_smooth[i]=sf(self.back_data[i])
                 self.pushButton_7.setText("背景光谱")
             # 绘制曲线
             # self.plot_widget.update_plot(self.ser.spec_data)
@@ -206,7 +209,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             back = (self.back_data_smooth[0] + self.back_data_smooth[1] + self.back_data_smooth[2]) / 3
             dark=  (self.dark_data_smooth[0] + self.dark_data_smooth[1] + self.dark_data_smooth[2]) / 3
             out=(self.spec_data_smooth-dark)/(back-dark)
-            out = savgol_filter(out, window_length=51, polyorder=3)
+            out = sf(out)
+            out=-np.log10(out)
             self.plot_widget.update_plot(out,int(self.textEdit.toPlainText()))
 
         else:
