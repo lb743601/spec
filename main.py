@@ -208,9 +208,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             back = (self.back_data_smooth[0] + self.back_data_smooth[1] + self.back_data_smooth[2]) / 3
             dark=  (self.dark_data_smooth[0] + self.dark_data_smooth[1] + self.dark_data_smooth[2]) / 3
-            out=(self.spec_data_smooth-dark)/(back-dark)
+            #out=(self.spec_data_smooth-dark)/(back-dark)
             out = sf(out)
-            out=-np.log10(out)
+            #out=-np.log10(out)
             self.plot_widget.update_plot(out,int(self.textEdit.toPlainText()))
 
         else:
